@@ -4,7 +4,7 @@ RUN apt-get update -qq && apt-get install -y \
   nodejs postgresql-client libyaml-dev build-essential git
 
 RUN useradd -m -d /home/solidus_user solidus_user
-USER solidus_user
+USER root
 
 WORKDIR /home/solidus_user/app
 RUN git config --global --add safe.directory /home/solidus_user/app
