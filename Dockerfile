@@ -8,7 +8,7 @@ RUN apt-get update -qq && apt-get install -y \
 RUN useradd -m -d /home/solidus_user solidus_user
 
 # Cambia al usuario de la app
-USER solidus_user
+USER root
 
 # Define el directorio de trabajo
 WORKDIR /home/solidus_user/app
