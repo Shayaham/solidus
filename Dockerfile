@@ -1,24 +1,26 @@
 FROM ruby:3.1.2-bullseye
 
-# Install system dependencies
+# Instala dependencias del sistema
 RUN apt-get update -qq && apt-get install -y \
   nodejs postgresql-client libyaml-dev build-essential git
 
-# Create app user
+# Crea el usuario de la app
 RUN useradd -m -d /home/solidus_user solidus_user
+
+# Cambia al usuario de la app
 USER solidus_user
 
-# Set working directory
+# Define el directorio de trabajo
 WORKDIR /home/solidus_user/app
 
-# Mark repo as safe for Git
+# Marca el directorio como seguro para Git
 RUN git config --global --add safe.directory /home/solidus_user/app
 
-# Copy app code
+# ⬇️ AQUÍ VA EL COPY
 COPY --chown=solidus_user:solidus_user . .
 
-# Install gems with psych config
+# Configura bundler para psych y ejecuta instalación
 RUN bundle config build.psych --with-libyaml-dir=/usr && bundle install
 
-# Start the Rails server
+# Comando para iniciar el servidor
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
