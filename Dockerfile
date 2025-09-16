@@ -1,22 +1,26 @@
-# Example: starting from a Ruby base image
 FROM ruby:3.1
 
-# Install dependencies for Solidus (including libyaml-dev for your psych error)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     libyaml-dev build-essential git \
  && rm -rf /var/lib/apt/lists/*
 
-# Mark the repo path as safe for Git
-RUN git config --system --add safe.directory /home/solidus_user/app
+# Create app user and set up home directory
+RUN useradd -m -d /home/solidus_user solidus_user
 
-# Set working directory
+# Switch to app user
+USER solidus_user
 WORKDIR /home/solidus_user/app
 
-# Copy your app code
-COPY . .
+# Set Git safe.directory config for this user
+RUN git config --global --add safe.directory /home/solidus_user/app
 
-# Continue with your bundle install, etc.
+# Copy app code
+COPY --chown=solidus_user:solidus_user . .
+
+# Install Ruby gems
 RUN bundle install
 
+# Start the app
 CMD ["bash", "-c", "bundle exec rails s -b 0.0.0.0"]
 
