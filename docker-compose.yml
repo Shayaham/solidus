@@ -29,8 +29,8 @@ services:
         MYSQL_VERSION: "8.0"
         BUNDLER_VERSION: 2
     image: solidus-4.7.0.dev
-    #command: bash -c "(bundle check || bundle) && bash -c 'echo Container initialized, see README.md for further steps.' && tail -f /dev/null"
-    command: bash -c "git config --system --add safe.directory /home/solidus_user/app && bundle exec rails s -b 0.0.0.0"
+    command: bash -c "(bundle check || bundle) && bash -c 'echo Container initialized, see README.md for further steps.' && tail -f /dev/null"
+    #command: bash -c "git config --system --add safe.directory /home/solidus_user/app && bundle exec rails s -b 0.0.0.0"
     environment:
       CAPYBARA_DRIVER: selenium_chrome_headless_docker_friendly
       DB_USERNAME: root
