@@ -19,6 +19,9 @@ services:
     environment:
       DATABASE_URL: postgres://solidus:password@db:5432/solidus_dev
     user: "1000:1000"  # Match host UID/GID
+    entrypoint: >
+      sh -c "chown -R 1000:1000 /home/solidus_user/app &&
+             bundle exec rails server -b 0.0.0.0"
 
 volumes:
   pgdata:
