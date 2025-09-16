@@ -4,6 +4,8 @@ FROM ruby:3.1
 RUN apt-get update && apt-get install -y \
     libyaml-dev build-essential git pkg-config \
  && rm -rf /var/lib/apt/lists/*
+RUN bundle config build.psych --with-yaml-dir=/usr --with-cflags="-I/usr/include"
+
 
 # Create app user
 RUN useradd -m -d /home/solidus_user solidus_user
