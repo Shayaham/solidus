@@ -1,23 +1,22 @@
+# Example: starting from a Ruby base image
+FROM ruby:3.1
 
+# Install dependencies for Solidus (including libyaml-dev for your psych error)
+RUN apt-get update && apt-get install -y \
+    libyaml-dev build-essential git \
+ && rm -rf /var/lib/apt/lists/*
 
-
-FROM ruby:3.1-slim
+# Mark the repo path as safe for Git
 RUN git config --system --add safe.directory /home/solidus_user/app
-# Install system deps for psych (YAML) and other C-extensions
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-    build-essential \
-    libyaml-dev \
-  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
+# Set working directory
+WORKDIR /home/solidus_user/app
+
+# Copy your app code
 COPY . .
 
-# Install gems
-RUN bundle config set without 'development test' \
-  && bundle install --jobs=4 --retry=3
+# Continue with your bundle install, etc.
+RUN bundle install
 
-# Expose and launch
-EXPOSE 3000
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+CMD ["bash", "-c", "bundle exec rails s -b 0.0.0.0"]
 
