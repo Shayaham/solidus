@@ -21,4 +21,4 @@ COPY --chown=solidus_user:solidus_user . .
 RUN bundle config build.psych --with-libyaml-dir=/usr && bundle install
 
 # Start the Rails server
-CMD ["rails", "server", "-b", "0.0.0.0"]
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
