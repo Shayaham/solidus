@@ -12,8 +12,8 @@ services:
     build: .
     ports:
       - "3070:3000"
-    volumes:
-      - .:/home/solidus_user/app
+    #volumes:
+    #  - .:/home/solidus_user/app
     depends_on:
       - db
     environment:
