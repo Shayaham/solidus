@@ -1,28 +1,24 @@
-FROM ruby:3.1
+FROM ruby:3.1.2
 
-# Install system packages
-RUN apt-get update && apt-get install -y \
-    libyaml-dev build-essential git pkg-config \
- && rm -rf /var/lib/apt/lists/*
-RUN bundle config build.psych --with-yaml-dir=/usr --with-cflags="-I/usr/include"
+# Install system dependencies
+RUN apt-get update -qq && apt-get install -y \
+  nodejs postgresql-client libyaml-dev build-essential git
 
-
-# Create app user
+# Create and switch to app user
 RUN useradd -m -d /home/solidus_user solidus_user
-
 USER solidus_user
+
+# Set working directory
 WORKDIR /home/solidus_user/app
 
-# Set Git safe directory
+# Mark repo as safe for Git
 RUN git config --global --add safe.directory /home/solidus_user/app
 
-# Explicitly tell Bundler where to find libyaml
-RUN bundle config build.psych --with-libyaml-dir=/usr
-
-# Copy app code
+# Copy app code and fix ownership
 COPY --chown=solidus_user:solidus_user . .
 
-# Install gems
-RUN bundle install
+# Install Ruby gems
+RUN bundle config build.psych --with-libyaml-dir=/usr && bundle install
 
-CMD ["bash", "-c", "bundle exec rails s -b 0.0.0.0"]
+# Start the Rails server
+CMD ["rails", "server", "-b", "0.0.0.0"]
