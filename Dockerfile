@@ -1,3 +1,6 @@
+USER solidus_user
+RUN git config --global --add safe.directory /home/solidus_user/app
+
 FROM ruby:3.1-slim
 
 # Install system deps for psych (YAML) and other C-extensions
