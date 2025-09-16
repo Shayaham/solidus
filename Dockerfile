@@ -11,7 +11,8 @@ RUN useradd -m -d /home/solidus_user solidus_user
 # Switch to app user
 USER solidus_user
 WORKDIR /home/solidus_user/app
-
+# Ensure correct ownership of the app directory
+RUN chown -R solidus_user:solidus_user /home/solidus_user/app
 # Set Git safe.directory config for this user
 RUN git config --global --add safe.directory /home/solidus_user/app
 
