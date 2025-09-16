@@ -4,6 +4,7 @@ FROM ruby:3.1
 RUN apt-get update && apt-get install -y \
     libyaml-dev build-essential git \
  && rm -rf /var/lib/apt/lists/*
+RUN bundle config build.psych --with-libyaml-dir=/usr
 
 # Create app user
 RUN useradd -m -d /home/solidus_user solidus_user
