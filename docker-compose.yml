@@ -1,66 +1,25 @@
-version: '3.7'
-
+version: '3.8'
 services:
-  mysql:
-    image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
+  db:
+    image: postgres:14
     environment:
-      MYSQL_ROOT_PASSWORD: password
-    volumes:
-      - mysql:/var/lib/mysql:cached
-
-  postgres:
-    image: postgres:13.2
-    environment:
-      POSTGRES_USER: root
+      POSTGRES_USER: solidus
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: solidus_dev
     volumes:
-      - postgres:/var/lib/postgresql/data:cached
+      - pgdata:/var/lib/postgresql/data
 
   app:
-    shm_size: '512mb'
-    build:
-      context: .dockerdev
-      dockerfile: Dockerfile
-      args:
-        RUBY_VERSION: "3.1"
-        PG_VERSION: 13
-        NODE_VERSION: 20
-        MYSQL_VERSION: "8.0"
-        BUNDLER_VERSION: 2
-    image: solidus-4.7.0.dev
-    command: bash -c "(bundle check || bundle) && bash -c 'echo Container initialized, see README.md for further steps.' && tail -f /dev/null && git config --system --add safe.directory /home/solidus_user/app"
-    #command: bash -c "git config --system --add safe.directory /home/solidus_user/app && bundle exec rails s -b 0.0.0.0"
-    environment:
-      CAPYBARA_DRIVER: selenium_chrome_headless_docker_friendly
-      DB_USERNAME: root
-      DB_PASSWORD: password
-      RAILS_VERSION: ${RAILS_VERSION:-~> 7.1.0}
-      DB_ALL: "1"
-      DB_MYSQL_HOST: mysql
-      DB_POSTGRES_HOST: postgres
-      HISTFILE: "/home/solidus_user/history/bash_history"
-      MYSQL_HISTFILE: "/home/solidus_user/history/mysql_history"
-      RAILS_ENV: development
-      ACTIVE_STORAGE_VARIANT_PROCESSOR: "vips"
-      BINDING: "0.0.0.0"
+    build: .
     ports:
-      - "${SANDBOX_PORT:-3930}:${SANDBOX_PORT:-3000}"
+      - "3000:3000"
     volumes:
-      - .:/home/solidus_user/app:delegated
-      - bundle:/home/solidus_user/gems:cached
-      - history:/home/solidus_user/history:cached
-      - .dockerdev/.psqlrc:/home/solidus_user/.psqlrc:cached
-    tty: true
-    stdin_open: true
-    tmpfs:
-      - /tmp
+      - .:/home/solidus_user/app
     depends_on:
-      - mysql
-      - postgres
+      - db
+    environment:
+      DATABASE_URL: postgres://solidus:password@db:5432/solidus_dev
+    user: "1000:1000"  # Match host UID/GID
 
 volumes:
-  bundle:
-  history:
-  postgres:
-  mysql:
+  pgdata:
